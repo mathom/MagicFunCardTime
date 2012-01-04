@@ -25,10 +25,14 @@ def grab_sets(*names):
 
 def pull_set(url):
     '''returns the list of urls'''
+    base_url = "http://magiccards.info"
     html = scrape(url)
     trs = html.findAll('tr', {"class": 'even'})
+    trs.append = html.findAll('tr', {"class": 'odd'})
     links = [tr.findAll('a') for tr in trs]
-#     [pull_card(x) for x in tds if x.t
+    urls = [base_url + str(link).split('">')[0][10:] for link in links]
+    [pull_card(x) for x in urls]
+    
 
 def pull_card(url):
     pass
