@@ -12,7 +12,8 @@ def scrape(url):
 
 def grab_sets(*names):
     '''returns urls for desired sets'''
-    html = scrape('http://magiccards.info/sitemap.html#en')
+    url = 'http://magiccards.info/sitemap.html'
+    html = scrape(url)
     english = [x for x in html('h2') if x.text.startswith('English')][0]
     table = english.findNext('table')
 
@@ -20,7 +21,7 @@ def grab_sets(*names):
     for h3 in [x for x in table.findAll('h3') if x.text in names]:
         results += [x['href'] for x in h3.findNext('ul').findAll('a')]
 
-    return results
+    return [url + '/' + x for x in results]
 
 
 def pull_set(url):
