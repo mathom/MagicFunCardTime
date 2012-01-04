@@ -29,12 +29,12 @@ def grab_sets(*names):
 
     results = []
     for h3 in [x for x in table.findAll('h3') if x.text in names]:
-        results += [x['href'] for x in h3.findNext('ul').findAll('a')]
+        results += [(x.text, x['href']) for x in h3.findNext('ul').findAll('a')]
 
     return [url + '/' + x for x in results]
 
 
-def pull_set(url):
+def pull_set(edition, url):
     '''returns the list of urls'''
     base_url = "http://magiccards.info"
     html = scrape(url)
@@ -73,6 +73,5 @@ if __name__=='__main__':
         init_db()
 
     updated_sets = grab_sets('Expansions', 'Core Sets')
-#     print updated_sets
-    [pull_set(x) for x in updated_sets]
+    [pull_set(*x) for x in updated_sets]
 
