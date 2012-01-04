@@ -3,8 +3,6 @@
 import requests
 from BeautifulSoup import BeautifulSoup
 import re
-<<<<<<< HEAD
-=======
 import sqlite3
 import os.path
 import atexit
@@ -30,7 +28,6 @@ def db_init():
     c = conn.cursor()
     c.executescript(qry)
     conn.commit()
->>>>>>> e107e6dcadff1018e83331db785c841e7613eea5
 
 
 def scrape(url):
