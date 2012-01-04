@@ -3,7 +3,17 @@
 import requests
 from BeautifulSoup import BeautifulSoup
 import re
+import sqlite3
+import os.path
 
+def init_db():
+    qry = open('magic.sql', 'r').read()
+    conn = sqlite3.connect('magic.db')
+    c = conn.cursor()
+    c.executescript(qry)
+    conn.commit()
+    c.close()
+    conn.close()
 
 def scrape(url):
     req = requests.get(url)
@@ -38,6 +48,10 @@ def pull_card(url):
     pass
 
 if __name__=='__main__':
+
+    if not os.path.isfile("magic.db"):
+        init_db()
+
     updated_sets = grab_sets('Expansions', 'Core Sets')
     print updated_sets
 
