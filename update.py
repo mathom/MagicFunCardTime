@@ -13,8 +13,14 @@ def grab_sets(names):
 
 
 def pull_set(url):
-    pass
+    '''returns the list of urls'''
+    html = scrape(url)
+#     tds = html.findAll('td')
+    tds = html.findAll('tr', {"class": 'even'})
+    [pull_card(x) for x in tds]
 
+def pull_card(url):
+    pass
 
 if __name__=='__main__':
     updated_sets = grab_sets('Expansions', 'Core Sets')
