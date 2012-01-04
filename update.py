@@ -3,6 +3,10 @@
 import requests
 from BeautifulSoup import BeautifulSoup
 
+def scrape(url):
+    req = requests.get(url)
+    return BeautifulSoup(req.content)
+
 def grab_sets(names):
     '''returns urls for desired sets'''
     return []
