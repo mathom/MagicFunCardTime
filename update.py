@@ -34,7 +34,8 @@ def pull_set(url):
     for tr in trs:
         link = tr.findAll('a')[0]
         url = base_url + str(link['href'])
-        pull_card(x)
+        print "PULLING CARD %s" % link.text
+        pull_card(url)
 #     urls = [base_url + str(link).split('">')[0][10:] for link in links]
 #     [pull_card(x) for x in urls]
     
