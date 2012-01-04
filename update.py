@@ -93,15 +93,22 @@ def pull_card(url):
     result["illus"] = info_td_ps[3].text
 
     uls = info_td.findAll('ul')
-    rulings = uls[0]
-    legality = uls[1]
     small = info_td.findNext('td').findChild('small')
     try:
-        result["other_parts"] = small.findNext('u')
+        result["rulings"] = uls[0].findAll('li')
+    except IndexError:
+        result["rulings"] = None
+    try:
+        result["legality"] = uls[1].findAll('li')
+    except IndexError:
+        result["rulings"] = None
+    small = info_td.findNext('td').findChild('small')
+    try:
+        result["other_parts"] = [x.text for x in small.findAll('u') if x.text.find('The other part is:') >= 0][0].findNext('a')
     except:
         result["other_parts"] = None
-    '''other_parts
-    printings
+    print result
+    '''printings
     editions
     cast_cost
     abilities
