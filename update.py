@@ -57,12 +57,27 @@ def pull_set(edition, url):
     html = scrape(url)
     trs = html.findAll('tr', {"class": 'even'})
     trs += html.findAll('tr', {"class": 'odd'})
+    dbc = db_handle()
+    c = dbc.cursor()
+    edition_id = c.execute("SELECT `id` FROM `editions` WHERE `edition` = ?", (edition,)).fetchone()[0]
+    if not edition_id:
+        c.execute("INSERT INTO `editions` VALUES(NULL, ?)", (edition,))
+        dbc.commit()
+        edition_id = c.lastrowid
     
     for tr in trs:
         link = tr.findAll('a')[0]
         url = base_url + str(link['href'])
-        print "PULLING CARD %s" % link.text
-        pull_card(url)
+        print "PULLING CARD %s:%s" % (edition, link.text)
+        print edition_id
+        card_id = c.execute('''SELECT `id` FROM `cards` 
+                            WHERE `edition_id` = ? AND `name` = ?''',
+                            (edition_id, link.text)).fetchone()
+        if not card_id:
+            c.execute("INSERT INTO `cards` VALUES(NULL, ?, ?)", (edition_id, link.text))
+            dbc.commit()
+
+#         pull_card(url)
     
 
 def pull_card(url):
