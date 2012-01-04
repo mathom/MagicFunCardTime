@@ -3,6 +3,32 @@
 import requests
 from BeautifulSoup import BeautifulSoup
 import re
+import sqlite3
+import os.path
+import atexit
+
+SQL_DB = None
+
+def db_handle():
+    global SQL_DB
+    if not SQL_DB:
+        SQL_DB = sqlite3.connect('magic.db')
+        atexit.register(db_close)
+    return SQL_DB
+
+def db_close():
+    global SQL_DB
+    SQL_DB.close()
+    SQL_DB = None
+
+def db_init():
+    qry = open('magic.sql', 'r').read()
+    conn = db_handle()
+    c = conn.cursor()
+    c.executescript(qry)
+    conn.commit()
+    c.close()
+    conn.close()
 
 
 def scrape(url):
@@ -12,19 +38,20 @@ def scrape(url):
 
 def grab_sets(*names):
     '''returns urls for desired sets'''
-    url = 'http://magiccards.info/sitemap.html'
+    domain = 'http://magiccards.info/'
+    url = domain + 'sitemap.html'
     html = scrape(url)
     english = [x for x in html('h2') if x.text.startswith('English')][0]
     table = english.findNext('table')
 
     results = []
     for h3 in [x for x in table.findAll('h3') if x.text in names]:
-        results += [x['href'] for x in h3.findNext('ul').findAll('a')]
+        results += [(x.text, domain + x['href']) for x in h3.findNext('ul').findAll('a')]
 
-    return [url + '/' + x for x in results]
+    return results
 
 
-def pull_set(url):
+def pull_set(edition, url):
     '''returns the list of urls'''
     base_url = "http://magiccards.info"
     html = scrape(url)
@@ -34,9 +61,8 @@ def pull_set(url):
     for tr in trs:
         link = tr.findAll('a')[0]
         url = base_url + str(link['href'])
-        pull_card(x)
-#     urls = [base_url + str(link).split('">')[0][10:] for link in links]
-#     [pull_card(x) for x in urls]
+        print "PULLING CARD %s" % link.text
+        pull_card(url)
     
 
 def pull_card(url):
@@ -71,7 +97,12 @@ def pull_card(url):
 
 
 if __name__=='__main__':
+
+    if not os.path.isfile("magic.db"):
+        db_init()
+
     updated_sets = grab_sets('Expansions', 'Core Sets')
-    print updated_sets
-    [pull_set(x) for x in updated_sets]
+    [pull_set(*x) for x in updated_sets]
+
+    db_close()
 
