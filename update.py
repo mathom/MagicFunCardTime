@@ -2,6 +2,7 @@
 
 import requests
 from BeautifulSoup import BeautifulSoup
+import re
 
 
 def scrape(url):
@@ -12,7 +13,7 @@ def scrape(url):
 def grab_sets(*names):
     '''returns urls for desired sets'''
     html = scrape('http://magiccards.info/sitemap.html#en')
-    english = [x for x in html('h2') if x.text.startswith('English')][0]
+    english = html('h2', text=re.compile(r'.*English.*'))[0]
     print repr(english)
     print repr(english.next)
     return []
