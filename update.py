@@ -46,8 +46,6 @@ def pull_set(edition, url):
         url = base_url + str(link['href'])
         print "PULLING CARD %s" % link.text
         pull_card(url)
-#     urls = [base_url + str(link).split('">')[0][10:] for link in links]
-#     [pull_card(x) for x in urls]
     
 
 def pull_card(url):
