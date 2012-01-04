@@ -3,6 +3,34 @@
 import requests
 from BeautifulSoup import BeautifulSoup
 import re
+<<<<<<< HEAD
+=======
+import sqlite3
+import os.path
+import atexit
+
+SQL_DB = None
+
+def db_handle():
+    global SQL_DB
+    if not SQL_DB:
+        SQL_DB = sqlite3.connect('magic.db')
+        atexit.register(db_close)
+    return SQL_DB
+
+def db_close():
+    global SQL_DB
+    if SQL_DB:
+        SQL_DB.close()
+    SQL_DB = None
+
+def db_init():
+    qry = open('magic.sql', 'r').read()
+    conn = db_handle()
+    c = conn.cursor()
+    c.executescript(qry)
+    conn.commit()
+>>>>>>> e107e6dcadff1018e83331db785c841e7613eea5
 
 
 def scrape(url):
@@ -30,13 +58,29 @@ def pull_set(url):
     html = scrape(url)
     trs = html.findAll('tr', {"class": 'even'})
     trs += html.findAll('tr', {"class": 'odd'})
+    dbc = db_handle()
+    c = dbc.cursor()
+    edition_id = c.execute("SELECT `id` FROM `editions` WHERE `edition` = ?", (edition,)).fetchone()
+    if not edition_id:
+        c.execute("INSERT INTO `editions` VALUES(NULL, ?)", (edition,))
+        dbc.commit()
+        edition_id = c.lastrowid
+    else:
+        edition_id = edition_id[0]
     
     for tr in trs:
         link = tr.findAll('a')[0]
         url = base_url + str(link['href'])
-        pull_card(x)
-#     urls = [base_url + str(link).split('">')[0][10:] for link in links]
-#     [pull_card(x) for x in urls]
+
+        print "PULLING CARD %s:%s" % (edition, link.text)
+        card_id = c.execute('''SELECT `id` FROM `cards` 
+                            WHERE `edition_id` = ? AND `name` = ?''',
+                            (edition_id, link.text)).fetchone()
+        if not card_id:
+            c.execute("INSERT INTO `cards` VALUES(NULL, ?, ?)", (edition_id, link.text))
+            dbc.commit()
+
+        pull_card(url)
     
 
 def pull_card(url):

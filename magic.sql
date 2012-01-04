@@ -13,10 +13,10 @@ CREATE TABLE `card_types` (
 CREATE TABLE `cards` (
   `id` INTEGER PRIMARY KEY,
   `edition_id` INTEGER,
-  `name` TEXT,
+  `name` TEXT
 );
 
-CREATE TABLE `card_definition` (
+CREATE TABLE `card_definitions` (
   `id` INTEGER PRIMARY KEY,
   `card_id` INTEGER,
   `cast_cost` TEXT,
