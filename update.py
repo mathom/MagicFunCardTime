@@ -73,6 +73,6 @@ if __name__=='__main__':
         init_db()
 
     updated_sets = grab_sets('Expansions', 'Core Sets')
-    print updated_sets
+#     print updated_sets
     [pull_set(x) for x in updated_sets]
 
