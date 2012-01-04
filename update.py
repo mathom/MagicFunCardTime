@@ -5,15 +5,31 @@ from BeautifulSoup import BeautifulSoup
 import re
 import sqlite3
 import os.path
+import atexit
 
-def init_db():
+SQL_DB = None
+
+def db_handle():
+    global SQL_DB
+    if not SQL_DB:
+        SQL_DB = sqlite3.connect('magic.db')
+        atexit.register(db_close)
+    return SQL_DB
+
+def db_close():
+    global SQL_DB
+    SQL_DB.close()
+    SQL_DB = None
+
+def db_init():
     qry = open('magic.sql', 'r').read()
-    conn = sqlite3.connect('magic.db')
+    conn = db_handle()
     c = conn.cursor()
     c.executescript(qry)
     conn.commit()
     c.close()
     conn.close()
+
 
 def scrape(url):
     req = requests.get(url)
@@ -22,16 +38,17 @@ def scrape(url):
 
 def grab_sets(*names):
     '''returns urls for desired sets'''
-    url = 'http://magiccards.info/sitemap.html'
+    domain = 'http://magiccards.info/'
+    url = domain + 'sitemap.html'
     html = scrape(url)
     english = [x for x in html('h2') if x.text.startswith('English')][0]
     table = english.findNext('table')
 
     results = []
     for h3 in [x for x in table.findAll('h3') if x.text in names]:
-        results += [(x.text, x['href']) for x in h3.findNext('ul').findAll('a')]
+        results += [(x.text, domain + x['href']) for x in h3.findNext('ul').findAll('a')]
 
-    return [url + '/' + x for x in results]
+    return results
 
 
 def pull_set(edition, url):
@@ -68,8 +85,10 @@ def pull_card(url):
 if __name__=='__main__':
 
     if not os.path.isfile("magic.db"):
-        init_db()
+        db_init()
 
     updated_sets = grab_sets('Expansions', 'Core Sets')
     [pull_set(*x) for x in updated_sets]
+
+    db_close()
 
