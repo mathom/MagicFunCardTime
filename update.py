@@ -27,8 +27,6 @@ def db_init():
     c = conn.cursor()
     c.executescript(qry)
     conn.commit()
-    c.close()
-    conn.close()
 
 
 def scrape(url):
@@ -59,11 +57,13 @@ def pull_set(edition, url):
     trs += html.findAll('tr', {"class": 'odd'})
     dbc = db_handle()
     c = dbc.cursor()
-    edition_id = c.execute("SELECT `id` FROM `editions` WHERE `edition` = ?", (edition,)).fetchone()[0]
+    edition_id = c.execute("SELECT `id` FROM `editions` WHERE `edition` = ?", (edition,)).fetchone()
     if not edition_id:
         c.execute("INSERT INTO `editions` VALUES(NULL, ?)", (edition,))
         dbc.commit()
         edition_id = c.lastrowid
+    else:
+        edition_id = edition_id[0]
     
     for tr in trs:
         link = tr.findAll('a')[0]
