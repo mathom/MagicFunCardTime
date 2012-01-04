@@ -23,7 +23,7 @@ def pull_set(url):
     '''returns the list of urls'''
     html = scrape(url)
     trs = html.findAll('tr', {"class": 'even'})
-#     links = 
+    links = [tr.findAll('a') for tr in trs]
 #     [pull_card(x) for x in tds if x.t
 
 def pull_card(url):
