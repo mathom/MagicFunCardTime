@@ -18,7 +18,8 @@ def db_handle():
 
 def db_close():
     global SQL_DB
-    SQL_DB.close()
+    if SQL_DB:
+        SQL_DB.close()
     SQL_DB = None
 
 def db_init():
@@ -69,7 +70,6 @@ def pull_set(edition, url):
         link = tr.findAll('a')[0]
         url = base_url + str(link['href'])
         print "PULLING CARD %s:%s" % (edition, link.text)
-        print edition_id
         card_id = c.execute('''SELECT `id` FROM `cards` 
                             WHERE `edition_id` = ? AND `name` = ?''',
                             (edition_id, link.text)).fetchone()
@@ -77,7 +77,7 @@ def pull_set(edition, url):
             c.execute("INSERT INTO `cards` VALUES(NULL, ?, ?)", (edition_id, link.text))
             dbc.commit()
 
-#         pull_card(url)
+        pull_card(url)
     
 
 def pull_card(url):
