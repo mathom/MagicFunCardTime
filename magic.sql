@@ -16,7 +16,7 @@ CREATE TABLE `cards` (
   `name` TEXT,
 );
 
-CREATE TABLE `card_definition` (
+CREATE TABLE `card_definitions` (
   `id` INTEGER PRIMARY KEY,
   `card_id` INTEGER,
   `cast_cost` TEXT,

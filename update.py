@@ -82,19 +82,33 @@ def pull_set(edition, url):
 
 def pull_card(url):
     html = scrape(url)
+
+    result = {}
     names = html.findAll('a', {"href": url.replace('http://magiccards.info', '')})
-    name = name[0].text
-    '''card_type
-    power
-    other_part
+    result["name"] = names[0].text
+    info_td = names[0].parent.parent
+    info_td_ps = info_td.findAll('p')
+    result["card_type"] = info_td_ps[0].text
+    ctext = info_td_ps[1].findChild('b').text
+    result["illus"] = info_td_ps[3].text
+
+    uls = info_td.findAll('ul')
+    rulings = uls[0]
+    legality = uls[1]
+    small = info_td.findNext('td').findChild('small')
+    try:
+        result["other_parts"] = small.findNext('u')
+    except:
+        result["other_parts"] = None
+    '''other_parts
     printings
     editions
+    cast_cost
     abilities
     powers
-    illus
     rulings
     legality'''
-    return name
+    return result
 
 
 if __name__=='__main__':
