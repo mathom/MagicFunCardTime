@@ -8,6 +8,10 @@ def grab_sets(names):
     return []
 
 
+def pull_set(url):
+    pass
+
+
 if __name__=='__main__':
     updated_sets = grab_sets('Expansions', 'Core Sets')
 
