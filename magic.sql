@@ -1,7 +1,7 @@
 
 CREATE TABLE `card_rulings` (
   `id` INTEGER PRIMARY KEY,
-  `card_id` INTEGER,
+  `card_def_id` INTEGER,
   `ruling_text` TEXT
 );
 
@@ -12,12 +12,17 @@ CREATE TABLE `card_types` (
 
 CREATE TABLE `cards` (
   `id` INTEGER PRIMARY KEY,
+  `edition_id` INTEGER,
   `name` TEXT,
+);
+
+CREATE TABLE `card_definition` (
+  `id` INTEGER PRIMARY KEY,
+  `card_id` INTEGER,
   `cast_cost` TEXT,
   `abilities` TEXT,
   `oracle` TEXT,
   `flavor` TEXT,
-  `edition_id` INTEGER,
   `double_id` INTEGER,
   `illustrator_id` INTEGER,
   `rarity` TEXT,
