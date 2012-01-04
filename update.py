@@ -21,9 +21,9 @@ def grab_sets(*names):
 def pull_set(url):
     '''returns the list of urls'''
     html = scrape(url)
-#     tds = html.findAll('td')
-    tds = html.findAll('tr', {"class": 'even'})
-    [pull_card(x) for x in tds]
+    trs = html.findAll('tr', {"class": 'even'})
+#     links = 
+#     [pull_card(x) for x in tds if x.t
 
 def pull_card(url):
     pass
