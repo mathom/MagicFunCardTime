@@ -27,11 +27,24 @@ def pull_set(url):
 #     [pull_card(x) for x in tds if x.t
 
 def pull_card(url):
-    pass
+    html = scrape(url)
+    names = html.findAll('a', {"href": url.replace('http://magiccards.info', '')})
+    name = name[0].text
+    '''card_type
+    power
+    other_part
+    printings
+    editions
+    abilities
+    powers
+    illus
+    rulings
+    legality'''
+    return name
+
 
 if __name__=='__main__':
     updated_sets = grab_sets('Expansions', 'Core Sets')
     print updated_sets
-
     [pull_set(x) for x in updated_sets]
 
